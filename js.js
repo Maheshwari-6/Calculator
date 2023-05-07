@@ -1,23 +1,49 @@
-class Calculator{
-    constructor(input,output){
-        this.inputDisplay=input;
-        this.outputDisplay=output;
-        this.inputHistory=[];
-    }
-  
-clearAllHistory(){
-    this.inputHistory=[];
-    this.updateInputDisplay();
-    this.updateoutputDisplay();
+const display = document.querySelector('.display');
+const controlButtons = document.querySelector('.controls').children;
+const allymbols = ['+', '-', 'X', '÷','%', 'C', '='];
+
+
+let firstValue = '';
+let secondValue = '';
+let symbol = '';
+let result = '';
+
+
+const calculate = () => {
+    firstValue = parseFloat(firstValue);
+    secondValue = parseFloat(secondValue);
+
+    if (symbol === '+') result = firstValue + secondValue;
+    if (symbol === '-') result = firstValue - secondValue;
+    if (symbol === 'X') result = firstValue * secondValue;
+    if (symbol === '÷') result = firstValue / secondValue;
+    if (symbol === '%') result = firstValue % secondValue;
+
+    display.innerText = result;
+    firstValue = result;
+    secondValue = '';
 }
 
-getAllInputValues(){
-    return this.inputHistory.map(entry=>entry.value);
-}
-updateInputDisplay(){
-    this.inputDisplay.value = this.getAllInputValues().joint("");
-}
-updateoutputDisplay(value){
-    this.outputDisplay.value = Number(value).toLocaleString();
-}
+for(let button of controlButtons) {
+    button.addEventListener('click', () => {
+        const { innerText: btnValue } = button;
+        const btnValueIsSymbol = allymbols.includes(btnValue);
+
+        if (!secondValue && btnValue === '=') return null;
+        
+        if (btnValue === 'C') {
+            firstValue = secondValue = symbol = '';
+            return display.innerText = '';
+        }
+
+        if (firstValue && btnValueIsSymbol) {
+            secondValue && calculate();
+            symbol = btnValue;
+        }
+
+        else if (!symbol) firstValue += btnValue;
+        else if (symbol) secondValue += btnValue;
+
+        if (btnValue !== '=' ) display.innerText += btnValue; 
+    })
 }
